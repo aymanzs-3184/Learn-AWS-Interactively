@@ -1,0 +1,6 @@
+{
+  "name": "CloudBench",
+  "description": "Hands-on AWS learning workbench for beginner software developers featuring interactive cloud labs, scenario quizzes, and a structured certification roadmap.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
