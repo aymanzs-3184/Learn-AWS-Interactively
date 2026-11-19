@@ -3,6 +3,7 @@ import { LABS } from './data/curriculum';
 import { useProgress } from './hooks/useProgress';
 import { AppTab, LabId } from './types/aws';
 import { OverviewPage } from './components/OverviewPage';
+import { StudyGuidePage } from './components/StudyGuidePage';
 import { LabsHub } from './components/LabsHub';
 import { QuizzesPage } from './components/QuizzesPage';
 import { RoadmapPage } from './components/RoadmapPage';
@@ -16,6 +17,8 @@ export default function App() {
   const {
     progress,
     markLabCompleted,
+    toggleStudyModule,
+    toggleFlashcardMastered,
     recordQuizScore,
     toggleMilestone,
     setActiveCertId,
@@ -37,8 +40,14 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleGoToStudy = () => {
+    setActiveTab('study');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const navItems: Array<{ id: AppTab; label: string }> = [
     { id: 'overview', label: 'Overview' },
+    { id: 'study', label: 'Study Guide' },
     { id: 'labs', label: 'Interactive Labs' },
     { id: 'quizzes', label: 'Quizzes' },
     { id: 'roadmap', label: 'Cert Roadmap' },
@@ -59,7 +68,7 @@ export default function App() {
             CloudBench
           </button>
 
-          {/* Zone 2: 4 single-line nav links */}
+          {/* Zone 2: 5 single-line nav links */}
           <nav
             aria-label="Primary"
             className="hidden md:flex items-center gap-7 text-sm font-medium"
@@ -134,8 +143,20 @@ export default function App() {
           <OverviewPage
             progress={progress}
             onLaunchLab={handleLaunchLab}
+            onGoToStudy={handleGoToStudy}
             onGoToQuizzes={() => handleLaunchQuiz(undefined)}
             onGoToRoadmap={() => setActiveTab('roadmap')}
+          />
+        )}
+
+        {activeTab === 'study' && (
+          <StudyGuidePage
+            completedStudyModules={progress.completedStudyModules}
+            masteredFlashcards={progress.masteredFlashcards}
+            onToggleStudyModule={toggleStudyModule}
+            onToggleFlashcardMastered={toggleFlashcardMastered}
+            onLaunchLab={handleLaunchLab}
+            onLaunchQuiz={(deckId) => handleLaunchQuiz(deckId)}
           />
         )}
 

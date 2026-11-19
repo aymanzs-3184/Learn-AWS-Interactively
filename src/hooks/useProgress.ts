@@ -5,6 +5,8 @@ const STORAGE_KEY = 'cloudbench_aws_progress_v1';
 
 const DEFAULT_PROGRESS: UserProgress = {
   completedLabs: [],
+  completedStudyModules: [],
+  masteredFlashcards: [],
   quizScores: {},
   checkedMilestones: [],
   activeCertId: 'dva-c02',
@@ -18,6 +20,12 @@ export function useProgress() {
       const parsed = JSON.parse(raw) as Partial<UserProgress>;
       return {
         completedLabs: Array.isArray(parsed.completedLabs) ? parsed.completedLabs : [],
+        completedStudyModules: Array.isArray(parsed.completedStudyModules)
+          ? parsed.completedStudyModules
+          : [],
+        masteredFlashcards: Array.isArray(parsed.masteredFlashcards)
+          ? parsed.masteredFlashcards
+          : [],
         quizScores: parsed.quizScores && typeof parsed.quizScores === 'object' ? parsed.quizScores : {},
         checkedMilestones: Array.isArray(parsed.checkedMilestones) ? parsed.checkedMilestones : [],
         activeCertId: typeof parsed.activeCertId === 'string' ? parsed.activeCertId : 'dva-c02',
@@ -42,6 +50,34 @@ export function useProgress() {
         ...prev,
         completedLabs: [...prev.completedLabs, labId],
       };
+    });
+  }, []);
+
+  const toggleStudyModule = useCallback((moduleId: string) => {
+    setProgress((prev) => {
+      const exists = prev.completedStudyModules.includes(moduleId);
+      return {
+        ...prev,
+        completedStudyModules: exists
+          ? prev.completedStudyModules.filter((id) => id !== moduleId)
+          : [...prev.completedStudyModules, moduleId],
+      };
+    });
+  }, []);
+
+  const toggleFlashcardMastered = useCallback((cardId: string, mastered: boolean) => {
+    setProgress((prev) => {
+      const exists = prev.masteredFlashcards.includes(cardId);
+      if (mastered && !exists) {
+        return { ...prev, masteredFlashcards: [...prev.masteredFlashcards, cardId] };
+      }
+      if (!mastered && exists) {
+        return {
+          ...prev,
+          masteredFlashcards: prev.masteredFlashcards.filter((id) => id !== cardId),
+        };
+      }
+      return prev;
     });
   }, []);
 
@@ -86,6 +122,8 @@ export function useProgress() {
   return {
     progress,
     markLabCompleted,
+    toggleStudyModule,
+    toggleFlashcardMastered,
     recordQuizScore,
     toggleMilestone,
     setActiveCertId,

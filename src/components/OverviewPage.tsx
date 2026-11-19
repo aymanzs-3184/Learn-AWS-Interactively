@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { ArrowRight, CheckCircle2, Layers } from 'lucide-react';
 import { CERTIFICATIONS, LABS, MENTAL_MODELS, QUIZ_DECKS } from '../data/curriculum';
+import { STUDY_MODULES } from '../data/studyMaterial';
 import { LabId, UserProgress } from '../types/aws';
 
 interface OverviewPageProps {
   progress: UserProgress;
   onLaunchLab: (labId: LabId) => void;
+  onGoToStudy: () => void;
   onGoToQuizzes: () => void;
   onGoToRoadmap: () => void;
 }
@@ -13,6 +15,7 @@ interface OverviewPageProps {
 export function OverviewPage({
   progress,
   onLaunchLab,
+  onGoToStudy,
   onGoToQuizzes,
   onGoToRoadmap,
 }: OverviewPageProps) {
@@ -50,29 +53,36 @@ export function OverviewPage({
               Learn AWS by wiring real architecture, not memorizing console menus.
             </h1>
             <p className="text-base text-slate-600 leading-relaxed max-w-xl">
-              Translate what you already know—Express routes, Docker containers, PostgreSQL, and
-              firewall rules—into hands-on IAM policies, Serverless APIs, VPC packet traces, and a
-              clear AWS certification path.
+              Study core cloud chapters, practice with active-recall flashcards, wire hands-on IAM
+              and serverless labs, and follow a clear certification roadmap built for software
+              engineers.
             </p>
           </div>
 
-          <div className="pt-8 flex flex-wrap items-center gap-4">
+          <div className="pt-8 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={() => onLaunchLab(nextLab.id)}
+              onClick={onGoToStudy}
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-lg transition-colors whitespace-nowrap shrink-0"
             >
-              {progress.completedLabs.length > 0
-                ? `Continue Lab ${nextLab.number}`
-                : 'Start Lab 01: IAM Policies'}
+              Read Study Guide
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
               type="button"
-              onClick={onGoToRoadmap}
+              onClick={() => onLaunchLab(nextLab.id)}
               className="px-4 py-2.5 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap shrink-0"
             >
-              Explore Cert Roadmap
+              {progress.completedLabs.length > 0
+                ? `Continue Lab ${nextLab.number}`
+                : 'Start Lab 01'}
+            </button>
+            <button
+              type="button"
+              onClick={onGoToRoadmap}
+              className="px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:underline whitespace-nowrap shrink-0"
+            >
+              Cert Roadmap
             </button>
           </div>
         </div>
@@ -104,6 +114,16 @@ export function OverviewPage({
       {/* Full-Width 4-Column Progress Strip */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-white border border-slate-200 rounded-xl p-6">
         <div className="space-y-1">
+          <div className="text-xs text-slate-500">Study Modules</div>
+          <div className="text-2xl font-semibold text-slate-900 font-mono tabular-nums">
+            {progress.completedStudyModules.length}/{STUDY_MODULES.length}
+          </div>
+          <div className="text-xs text-slate-600 tabular-nums">
+            {progress.masteredFlashcards.length} flashcards mastered
+          </div>
+        </div>
+
+        <div className="space-y-1">
           <div className="text-xs text-slate-500">Interactive Labs</div>
           <div className="text-2xl font-semibold text-slate-900 font-mono tabular-nums">
             {progress.completedLabs.length}/{LABS.length}
@@ -127,14 +147,6 @@ export function OverviewPage({
             {activeCert.code}
           </div>
           <div className="text-xs text-slate-600 truncate">{activeCert.title}</div>
-        </div>
-
-        <div className="space-y-1">
-          <div className="text-xs text-slate-500">Readiness Milestones</div>
-          <div className="text-2xl font-semibold text-slate-900 font-mono tabular-nums">
-            {progress.checkedMilestones.length}
-          </div>
-          <div className="text-xs text-slate-600">Checklist items verified</div>
         </div>
       </section>
 
